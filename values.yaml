@@ -1,0 +1,20 @@
+replicaCount: 1
+
+postgres:
+  name: postgres
+  configdbname: postgresconfig
+  dbservice: POSTGRES_DB
+  dbuser: POSTGRES_USER
+  dbpassword: POSTGRES_PASSWORD
+  dbcontainerport: 5432
+  mountpath: /var/lib/postgresql/db-data
+  pvc: postgres-pv-claim
+  POSTGRES_DB: demo_db
+  POSTGRES_USER: mudasir
+
+flask:
+  name: flask
+  image: 284889899633.dkr.ecr.ap-southeast-2.amazonaws.com/repo2:image_latest
+  flaskcontainerport: 80
+  targetPort: 5000
+  nodePort: 30080

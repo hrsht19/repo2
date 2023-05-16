@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.postgres.name }}
+  labels:
+    app: {{ .Values.postgres.name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.postgres.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.postgres.name }}
+    spec:
+      containers:
+      - name: {{ .Values.postgres.name }}
+        image: postgres:9.6.2
+        env:
+        - name: {{ .Values.postgres.dbservice }}
+          valueFrom:
+            configMapKeyRef:
+              key: {{ .Values.postgres.dbservice }}
+              name: {{ .Values.postgres.configdbname }}
+        - name: {{ .Values.postgres.dbuser }}
+          valueFrom:
+            configMapKeyRef:
+              key: {{ .Values.postgres.dbuser }}
+              name: {{ .Values.postgres.configdbname }}
+        - name: {{ .Values.postgres.dbpassword }}
+          valueFrom:
+            configMapKeyRef:
+              key: {{ .Values.postgres.dbpassword }}
+              name: {{ .Values.postgres.configdbname }}
+        ports:
+          - containerPort: {{ .Values.postgres.dbcontainerport }}
+            name: {{ .Values.postgres.name }}
+        volumeMounts:
+          - name: postgres-storage
+            mountPath: {{ .Values.postgres.mountpath }}
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: {{ .Values.postgres.pvc }}
